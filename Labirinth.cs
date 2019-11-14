@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Labirinth
 {
@@ -22,6 +23,10 @@ namespace Labirinth
 
         static void Init()
         {
+            FileStream fs = new FileStream("XMLFile1.xml") ;
+            int height1 = fs.height;
+            int width1 = fs.width;
+            int freq1 = fs.freq;
             GenerateMap();
             PlaceCharacter();
         }
