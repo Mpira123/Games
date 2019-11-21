@@ -1,45 +1,61 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
+using System.Xml;
 
 namespace Labirinth
 {
     class Labirinth
     {
         static Random r = new Random();
-        static int height = 20, width = 10, freq = 30, dx, dy, newX, newY;
-        static int CharX = r.Next(1, width), CharY = r.Next(1, height);
-        static int FinishX = r.Next(1, width), FinishY = r.Next(1, height);
-        static char[,] Map = new char[width, height];
+        static int dx, dy, newX, newY;
+        static int CharX, CharY;
+        static int FinishX, FinishY;
+        static char[,] Map;
+        static int height, width, freq;
 
-
-
-
-
-
-
-        static void Init()
+        public static void LoadParams()
         {
-            FileStream fs = new FileStream("XMLFile1.xml") ;
-            int height1 = fs.height;
-            int width1 = fs.width;
-            int freq1 = fs.freq;
+            XmlDocument xDoc = new XmlDocument();
+            xDoc.Load("Parametrs.xml");
+            XmlElement xRoot = xDoc.DocumentElement;
+            foreach (XmlNode xnode in xRoot)
+            {
+                switch (xnode.Name)
+                {
+                    case "height":
+                        height = Int32.Parse(xnode.InnerText);
+                        break;
+                    case "width":
+                        width = Int32.Parse(xnode.InnerText);
+                        break;
+                    case "freq":
+                        freq = Int32.Parse(xnode.InnerText);
+                        break;
+                }
+            }
+        }
+
+
+        public static void Init()
+        {
+            LoadParams();
+            CharX = r.Next(1, width);
+            CharY = r.Next(1, height);
+            FinishX = r.Next(1, width);
+            FinishY = r.Next(1, height);
+            Map = new char[width, height];
             GenerateMap();
             PlaceCharacter();
         }
         static char[,] GenerateMap()
         {
             int RandNum;
-            for (int i = 0; i < height; i++) 
+            for (int i = 0; i < height; i++)
             {
-                for (int j = 0; i < width; j++) 
+                for (int j = 0; j < width; j++)
                 {
                     RandNum = r.Next(100);
-                    if (RandNum < freq) Map[i, j] = '#';
-                    else Map[i, j] = ' ';
+                    if (RandNum < freq) Map[j, i] = '#';
+                    else Map[j, i] = ' ';
                 }
             }
             Map[FinishX, FinishY] = 'F';
@@ -60,20 +76,23 @@ namespace Labirinth
         {
             newX = CharX + dx;
             newY = CharY + dy;
-            if (CanGoTo() == true) GoTo();
+            if (CanGoTo()) GoTo();
         }
         static bool IsWalkable()
         {
+
+            if (newX >= width || newY >= height) return false;
             return Map[newX, newY] != '#';
         }
         static bool CanGoTo()
         {
-            if (newX > width && newY > height) return false;
+
             if (!IsWalkable()) return false;
             return true;
         }
         static void GoTo()
         {
+            Map[CharX, CharY] = ' ';
             CharX = newX;
             CharY = newY;
         }
@@ -82,7 +101,7 @@ namespace Labirinth
             if (Map[CharX, CharY] == 'F') return true;
             return false;
         }
-        
+
 
 
 
@@ -95,12 +114,13 @@ namespace Labirinth
 
         static void Draw()
         {
-            for (int i = 0; i < height; i++) 
+            Console.Clear();
+            for (int i = 0; i < height; i++)
             {
-                for (int j = 0; j < width; j++) 
+                for (int j = 0; j < width; j++)
                 {
-                    if (i == CharX && j == CharY) Map[i, j] = '@';
-                    Console.Write(Map[i, j]);
+                    if (i == CharY && j == CharX) Map[j, i] = '@';
+                    Console.Write(Map[j, i]);
                 }
                 Console.WriteLine();
             }
