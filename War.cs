@@ -1,4 +1,4 @@
-﻿using System;
+++﻿using System;
 using System.Collections.Generic;
 
 
@@ -11,6 +11,7 @@ namespace war
         public static bool pat = true;
         public static Queue<int> deck1 =null, deck2 = null;
         static void Main()
+            //Сейчас я придерживаюсь полиморфизма
         {
             Read();
             while (!IsEndgame() && pat == false)
@@ -35,6 +36,7 @@ namespace war
                 string card = Console.ReadLine();
                 card = card.Substring(card.Length-1);
                 if (Int32.TryParse(card, out int res) == false)
+                    
                 {
                     switch (card)
                     {
